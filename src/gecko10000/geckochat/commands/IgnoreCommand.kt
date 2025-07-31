@@ -1,5 +1,6 @@
 package gecko10000.geckochat.commands
 
+import com.destroystokyo.paper.profile.PlayerProfile
 import gecko10000.geckochat.GeckoChat
 import gecko10000.geckochat.IgnoreManager
 import gecko10000.geckochat.di.MyKoinComponent
@@ -40,8 +41,8 @@ class IgnoreCommand : MyKoinComponent {
     }
 
     @Executes
-    fun ignorePlayer(sender: CommandSender, @Executor player: Player, toIgnore: Player) {
-        val uuid = toIgnore.uniqueId
+    fun ignorePlayer(sender: CommandSender, @Executor player: Player, toIgnore: PlayerProfile) {
+        val uuid = toIgnore.id ?: return
         if (player.uniqueId == uuid) {
             player.sendRichMessage("<red>You can't escape the voices.")
             return
@@ -52,7 +53,7 @@ class IgnoreCommand : MyKoinComponent {
         player.sendRichMessage(
             "<yellow><state> <player>.",
             Placeholder.unparsed("state", if (wasIgnored) "Unignored" else "Ignored"),
-            Placeholder.component("player", toIgnore.name()),
+            Placeholder.unparsed("player", toIgnore.name ?: "unknown player"),
         )
     }
 
