@@ -1,10 +1,10 @@
 package gecko10000.geckochat
 
 import gecko10000.geckochat.di.MyKoinComponent
+import gecko10000.geckochat.placeholders.PlaceholderFixer
 import gecko10000.geckolib.extensions.MM
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
-import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
@@ -25,9 +25,13 @@ class ChatListener : MyKoinComponent, Listener, ChatRenderer {
 
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience):
             Component {
-        val withPlaceholders = PlaceholderAPI.setPlaceholders(source, plugin.config.chatFormat)
+        val (fixedFormat, tagResolver) = PlaceholderFixer.fixStringAndGetPlaceholderValues(
+            plugin.config.chatFormat,
+            source
+        )
         return MM.deserialize(
-            withPlaceholders,
+            fixedFormat,
+            tagResolver,
             Placeholder.component("message", message),
         )
     }
