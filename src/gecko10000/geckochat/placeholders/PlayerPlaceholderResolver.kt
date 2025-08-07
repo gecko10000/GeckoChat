@@ -8,7 +8,7 @@ object PlayerPlaceholderResolver {
     fun getTagResolver(prefix: String, player: Player): TagResolver {
         return TagResolver.resolver(prefix) { args, context ->
             val placeholder = args.popOr("Missing a PAPI placeholder.").value()
-            val fixedPlaceholderValue = PlaceholderFixer.fix(player, placeholder.trim { it == '%' })
+            val fixedPlaceholderValue = PlaceholderFixer.fixPlaceholder(player, placeholder.trim { it == '%' })
             return@resolver Tag.inserting(fixedPlaceholderValue)
         }
     }

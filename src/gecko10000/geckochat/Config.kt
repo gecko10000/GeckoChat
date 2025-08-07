@@ -13,9 +13,12 @@ import org.bukkit.Sound
 
 @Serializable
 data class Config(
+    @YamlComment("Use the <header> tag to add the hover and command suggested on click.")
     val chatFormat: String =
-        "<gray>(<#00ffff>∞</#00ffff> | %luckperms_prefix%<gray>) " +
-                "<white>%player_displayname%<gray>: <white><message>",
+        "<header><gray>(<#00ffff>∞</#00ffff> | %luckperms_prefix%<gray>) " +
+                "<white>%player_displayname%<gray>:</header> <white><message>",
+    val hoverMessage: String = "<green>%player_name%\n<yellow>Click to message",
+    val clickSuggestion: String = "/msg %player_name% ",
     val ignoreListHeader: Component = MM.deserialize("<gold><u>Ignored Players"),
     private val ignoreListEntryFormat: String = "<gray>{name}</gray> " +
             "<click:run_command:/ignore {name}><red>❌</red></click>",

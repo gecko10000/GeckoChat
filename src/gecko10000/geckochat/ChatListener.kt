@@ -5,9 +5,14 @@ import gecko10000.geckochat.placeholders.PlaceholderFixer
 import gecko10000.geckolib.extensions.MM
 import io.papermc.paper.chat.ChatRenderer
 import io.papermc.paper.event.player.AsyncChatEvent
+import me.clip.placeholderapi.PlaceholderAPI
 import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.minimessage.tag.Tag
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -23,6 +28,21 @@ class ChatListener : MyKoinComponent, Listener, ChatRenderer {
         plugin.server.pluginManager.registerEvents(this, plugin)
     }
 
+    private fun headerTag(player: Player): Tag {
+        val hoverComponent = PlaceholderFixer.fixStringIntoComponent(plugin.config.hoverMessage, player)
+        return Tag.styling { b ->
+            b.hoverEvent(HoverEvent.showText(hoverComponent))
+                .clickEvent(
+                    ClickEvent.suggestCommand(
+                        PlaceholderAPI.setPlaceholders(
+                            player, plugin.config
+                                .clickSuggestion
+                        )
+                    )
+                )
+        }
+    }
+
     override fun render(source: Player, sourceDisplayName: Component, message: Component, viewer: Audience):
             Component {
         val (fixedFormat, tagResolver) = PlaceholderFixer.fixStringAndGetPlaceholderValues(
@@ -33,6 +53,7 @@ class ChatListener : MyKoinComponent, Listener, ChatRenderer {
             fixedFormat,
             tagResolver,
             Placeholder.component("message", message),
+            TagResolver.resolver("header", headerTag(source)),
         )
     }
 
